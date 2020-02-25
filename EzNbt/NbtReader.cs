@@ -16,7 +16,7 @@ namespace EzNbt
         /// </summary>
         /// <param name="path"></param>
         /// <returns>The main compound.</returns>
-        public static KeyValuePair<string, dynamic> Read(string path)
+        public static KeyValuePair<string, dynamic> Open(string path)
         {
             var bytes = File.ReadAllBytes(path);
 
