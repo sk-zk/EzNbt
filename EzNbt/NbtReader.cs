@@ -16,7 +16,7 @@ namespace EzNbt
         /// </summary>
         /// <param name="path"></param>
         /// <returns>The main compound.</returns>
-        public static NbtTag Read(string path)
+        public static KeyValuePair<string, dynamic> Read(string path)
         {
             var bytes = File.ReadAllBytes(path);
 
@@ -42,14 +42,14 @@ namespace EzNbt
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
-        public static NbtTag ReadTag(BigEndianBinaryReader r)
+        public static KeyValuePair<string, dynamic> ReadTag(BigEndianBinaryReader r)
         {
             var type = (TagType)r.ReadByte();
             var name = r.ReadString();
             dynamic data = null;
             data = ReadPayload(r, type);
 
-            NbtTag nbtTag = new NbtTag(name, data);
+            var nbtTag = new KeyValuePair<string, dynamic>(name, data);
             return nbtTag;
         }
 
@@ -64,11 +64,11 @@ namespace EzNbt
             switch (type)
             {
                 case TagType.Compound:
-                    var tags = new Dictionary<string, NbtTag>();
+                    var tags = new Dictionary<string, KeyValuePair<string, dynamic>>();
                     while (r.PeekChar() != (int)TagType.End)
                     {
                         var tag = ReadTag(r);
-                        tags.Add(tag.Name, tag);
+                        tags.Add(tag.Key, tag);
                     }
                     r.ReadByte(); // consume End tag after last compound
                     return tags;
