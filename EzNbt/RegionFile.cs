@@ -53,7 +53,7 @@ namespace EzNbt
         /// <param name="x"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public KeyValuePair<string, dynamic> GetChunk(int x, int z)
+        public Dictionary<string, dynamic> GetChunk(int x, int z)
         {
             var locationIdx = XZToLocationTableIndex(x, z);
             var chunkOffset = LocationTable[locationIdx].Offset;

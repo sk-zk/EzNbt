@@ -16,7 +16,7 @@ namespace EzNbt
         /// </summary>
         /// <param name="path"></param>
         /// <returns>The main compound.</returns>
-        public static KeyValuePair<string, dynamic> Open(string path)
+        public static Dictionary<string, dynamic> Open(string path)
         {
             var stream = StreamCreator.Create(path);
             return ReadNbtStream(stream);
@@ -27,20 +27,20 @@ namespace EzNbt
         /// </summary>
         /// <param name="nbtBytes"></param>
         /// <returns></returns>
-        public static KeyValuePair<string, dynamic> FromMemory(byte[] nbtBytes)
+        public static Dictionary<string, dynamic> FromMemory(byte[] nbtBytes)
         {
             var stream = StreamCreator.Create(nbtBytes);
             return ReadNbtStream(stream);
         }
 
-        private static KeyValuePair<string, dynamic> ReadNbtStream(MemoryStream stream)
+        private static Dictionary<string, dynamic> ReadNbtStream(MemoryStream stream)
         {
             using (var r = new BigEndianBinaryReader(stream))
             {
                 r.BaseStream.Position = 0;
                 var mainCompound = ReadTag(r);
                 stream.Dispose();
-                return mainCompound;
+                return mainCompound.Value;
             }
         }
 
