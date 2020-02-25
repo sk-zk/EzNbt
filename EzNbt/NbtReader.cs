@@ -71,11 +71,11 @@ namespace EzNbt
             switch (type)
             {
                 case TagType.Compound:
-                    var tags = new Dictionary<string, KeyValuePair<string, dynamic>>();
+                    var tags = new Dictionary<string, dynamic>();
                     while (r.PeekChar() != (int)TagType.End)
                     {
                         var tag = ReadTag(r);
-                        tags.Add(tag.Key, tag);
+                        tags.Add(tag.Key, tag.Value);
                     }
                     r.ReadByte(); // consume End tag after last compound
                     return tags;
