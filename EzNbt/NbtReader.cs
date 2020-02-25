@@ -18,22 +18,29 @@ namespace EzNbt
         /// <returns>The main compound.</returns>
         public static KeyValuePair<string, dynamic> Open(string path)
         {
-            var bytes = File.ReadAllBytes(path);
+            var stream = StreamCreator.Create(path);
+            return ReadNbtStream(stream);
+        }
 
-            // gzip magic bytes
-            if(bytes[0] == 0x1f && bytes[1] == 0x8b)
-            {
-                bytes = GZipStream.UncompressBuffer(bytes);
-            }
+        /// <summary>
+        /// Parses NBT data from memory.
+        /// </summary>
+        /// <param name="nbtBytes"></param>
+        /// <returns></returns>
+        public static KeyValuePair<string, dynamic> FromMemory(byte[] nbtBytes)
+        {
+            var stream = StreamCreator.Create(nbtBytes);
+            return ReadNbtStream(stream);
+        }
 
-            using (var ms = new MemoryStream(bytes))
+        private static KeyValuePair<string, dynamic> ReadNbtStream(MemoryStream stream)
+        {
+            using (var r = new BigEndianBinaryReader(stream))
             {
-                using (var r = new BigEndianBinaryReader(ms))
-                {
-                    r.BaseStream.Position = 0;
-                    var mainCompound = ReadTag(r);
-                    return mainCompound;
-                }
+                r.BaseStream.Position = 0;
+                var mainCompound = ReadTag(r);
+                stream.Dispose();
+                return mainCompound;
             }
         }
 

@@ -21,4 +21,13 @@ namespace EzNbt
         IntArray = 11,
         LongArray = 12,
     }
+
+    /// <summary>
+    /// Chunk compression types.
+    /// </summary>
+    public enum CompressionType
+    {
+        Gzip = 1,
+        Zlib = 2
+    }
 }
