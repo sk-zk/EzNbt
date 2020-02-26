@@ -38,30 +38,35 @@ namespace EzNbt
         /// <summary>
         /// Checks if a chunk exists in the region.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="z"></param>
+        /// <param name="localX"></param>
+        /// <param name="localZ"></param>
         /// <returns></returns>
-        public bool ChunkExists(int x, int z)
+        public bool ChunkExists(int localX, int localZ)
         {
-            var locationIdx = XZToLocationTableIndex(x, z);
+            var locationIdx = XZToLocationTableIndex(localX, localZ);
             return LocationTable[locationIdx].Offset != 0;
         }
 
         /// <summary>
         /// Returns the NBT data of a chunk.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="z"></param>
+        /// <param name="localX"></param>
+        /// <param name="localZ"></param>
         /// <returns></returns>
-        public Dictionary<string, dynamic> GetChunk(int x, int z)
+        public Dictionary<string, dynamic> GetChunk(int localX, int localZ)
         {
-            var locationIdx = XZToLocationTableIndex(x, z);
+            var locationIdx = XZToLocationTableIndex(localX, localZ);
             var chunkOffset = LocationTable[locationIdx].Offset;
 
             // if offset is 0, the chunk doesn't exist in the file
             if (chunkOffset == 0)
                 throw new ArgumentOutOfRangeException("Chunk doesn't exist.");
 
+            return GetChunk(chunkOffset);
+        }
+
+        private Dictionary<string, dynamic> GetChunk(long chunkOffset)
+        {
             r.BaseStream.Position = chunkOffset;
 
             var chunkLength = r.ReadInt32();
@@ -69,6 +74,18 @@ namespace EzNbt
 
             var bytes = r.ReadBytes(chunkLength);
             return NbtReader.FromMemory(bytes);
+        }
+
+        public List<Dictionary<string, dynamic>> GetAllChunks()
+        {
+            var list = new List<Dictionary<string, dynamic>>();
+            foreach (var entry in LocationTable)
+            {
+                if (entry.Offset == 0) continue;
+
+                list.Add(GetChunk(entry.Offset));
+            }
+            return list;
         }
 
         private void ReadTimestampTable()
@@ -99,9 +116,9 @@ namespace EzNbt
             }
         }
 
-        private static int XZToLocationTableIndex(int x, int z)
+        private static int XZToLocationTableIndex(int localX, int localZ)
         {
-            return ((x % Dimension) + (z % Dimension) * Dimension) * 4;
+            return ((localX % Dimension) + (localZ % Dimension) * Dimension) * 4;
         }
 
         public void Dispose()
