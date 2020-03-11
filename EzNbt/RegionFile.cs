@@ -118,7 +118,7 @@ namespace EzNbt
 
         private static int XZToLocationTableIndex(int localX, int localZ)
         {
-            return ((localX % Dimension) + (localZ % Dimension) * Dimension) * 4;
+            return localX + localZ * Dimension;
         }
 
         public void Dispose()
