@@ -16,6 +16,7 @@ namespace EzNbt
             var bytes = File.ReadAllBytes(path);
             return Create(bytes);
         }
+
         public static MemoryStream Create(byte[] bytes)
         {
             // check zlib
@@ -31,7 +32,6 @@ namespace EzNbt
                 }
             }
             // otherwise, assume uncompressed
-
             return new MemoryStream(bytes);
         }
 
