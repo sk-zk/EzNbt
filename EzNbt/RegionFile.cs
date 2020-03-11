@@ -43,6 +43,7 @@ namespace EzNbt
         /// <returns></returns>
         public bool ChunkExists(int localX, int localZ)
         {
+            AssertChunkIndexInRange(localX, localZ);
             var locationIdx = XZToLocationTableIndex(localX, localZ);
             return LocationTable[locationIdx].Offset != 0;
         }
@@ -55,6 +56,8 @@ namespace EzNbt
         /// <returns></returns>
         public Dictionary<string, dynamic> GetChunk(int localX, int localZ)
         {
+            AssertChunkIndexInRange(localX, localZ);
+
             var locationIdx = XZToLocationTableIndex(localX, localZ);
             var chunkOffset = LocationTable[locationIdx].Offset;
 
@@ -119,6 +122,18 @@ namespace EzNbt
         private static int XZToLocationTableIndex(int localX, int localZ)
         {
             return localX + localZ * Dimension;
+        }
+
+        /// <summary>
+        /// Checks if a X/Z index of a chunk is in range.  
+        /// Throws ArgumentOutOfRangeException if it isn't.
+        /// </summary>
+        private static void AssertChunkIndexInRange(int localX, int localZ)
+        {
+            if (localX > Dimension || localX < 0)
+                throw new ArgumentOutOfRangeException($"X must be between 0 and {Dimension}.");
+            if (localZ > Dimension || localZ < 0)
+                throw new ArgumentOutOfRangeException($"Z must be between 0 and {Dimension}.");
         }
 
         public void Dispose()
